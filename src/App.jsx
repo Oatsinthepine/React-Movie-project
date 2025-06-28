@@ -1,24 +1,109 @@
 import React from 'react'
 import Search from "./components/Search.jsx";
+import {useEffect, useState} from "react";
+
+
+//declare the API base url
+const API_BASE_URL = "https://api.themoviedb.org/3/";
+
+// declare the API key
+const API_KEY = import.meta.env.VITE_TMDB_API_KEY
+
+// declare the API options, as this API_KEY and API_BASE_URL will be used within the fetch api call
+const API_OPTIONS = {
+    method: "GET",
+    headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${API_KEY}`
+    }
+}
+
 
 function App() {
 
     // here we will add the useState
-    const [searchTerm, setSearchTerm] = React.useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+
+    // declare a useState for errors if something goes wrong when fetching the data
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const [movieList, setMovieList] = useState([]); // This will hold the list of movies fetched from the API
+
+    const [isLoading, setIsLoading] = useState(false); // This will hold the loading state
+
+    // here we add the fetch async function to fetch the data from the API
+    const fetchMovies = async function getMovies() {
+        setIsLoading(true); // Set loading state to true before fetching data
+        setErrorMessage(""); // Reset error message before fetching data
+
+        try {
+            const endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+            const response = await fetch(endpoint, API_OPTIONS);
+            // alert(response)
+            //throw new Error('Testing error'); // This line is just for testing error handling
+            if(!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            // await the response in json then log the data in console, just a test
+            const data = await response.json();
+            console.log(data);
+            //
+            if(data.Response === "False") {
+                setErrorMessage(data.Error || "Failed to fetch movies.");
+                setMovieList([]);
+                return;
+            } else {
+                setMovieList(data.results)
+            }
+
+        } catch (error) {
+            console.log(`Error fetching movies: ${error}`);
+            setErrorMessage("Failed to fetch movies. Please try again later.");
+        } finally {
+            setIsLoading(false); // Set loading state to false after fetching data
+        }
+    }
+
+
+    // useEffect to
+    useEffect(() => {
+        fetchMovies();
+        }, []
+    )
+
+    // put the
+    let content;
+    if (isLoading) {
+        content = <p className="text-white">Loading...</p>
+    } else if (errorMessage) {
+        content = <p className="text-red-500">{errorMessage}</p>
+    } else {
+        content = <ul>
+            {movieList.map((movie) => {
+                return (<p key={movie.id} className="text-white">{movie.title}</p>)
+            })}
+        </ul>
+    }
 
     return (
         <main>
-            <div className="pattern"/>
-                <div className="wrapper">
-                    <header>
-                        <img src="./hero.png" alt="Hero Banner"/>
-                        <h1>Find <span className="text-gradient">Movies</span> you like!</h1>
-                    </header>
+            <div className="wrapper">
+                <header>
+                    <img src="./hero.png" alt="Hero Banner"/>
+                    <h1>Find <span className="text-gradient">Movies</span> you like!</h1>
                     <Search searchTerm = {searchTerm} setSearchTerm = {setSearchTerm}/>
-                    <h1>{searchTerm}</h1>
+                </header>
+
+                <section className="all-movies">
+                    <h2>All Movies</h2>
+                    {/*{errorMessage && <p className="text-red-500">{errorMessage}</p>}*/}
+                    {/*Please note that JSX can't directly take the js if/else if/else conditional checking*/}
+                    {content}
+                </section>
             </div>
         </main>
     )
 }
 
 export default App // Exporting the App component
+
