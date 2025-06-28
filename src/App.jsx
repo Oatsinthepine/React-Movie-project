@@ -2,6 +2,9 @@ import React from 'react'
 import Search from "./components/Search.jsx";
 import {useEffect, useState} from "react";
 import Spinner from "./components/Spinner.jsx";
+import MovieCard from "./components/MovieCard.jsx";
+
+
 
 //declare the API base url
 const API_BASE_URL = "https://api.themoviedb.org/3/";
@@ -88,30 +91,31 @@ function App() {
     } else {
         content = <ul>
             {movieList.map((movie) => {
-                return (<p key={movie.id} className="text-white">{movie.title}</p>)
+                // return (<p key={movie.id} className="text-white">{movie.title}</p>
+                return <MovieCard key= {movie.id} movie= {movie}/>
             })}
         </ul>
     }
 
     return (
-        <main>
-            <div className="wrapper">
-                <header>
-                    <img src="./hero.png" alt="Hero Banner"/>
-                    <h1>Find <span className="text-gradient">Movies</span> you like!</h1>
-                    <Search searchTerm = {searchTerm} setSearchTerm = {setSearchTerm}/>
-                </header>
+            <main>
+                <div className="pattern"/>
+                <div className="wrapper">
+                    <header>
+                        <img src="/hero.png" alt="Hero Banner"/>
+                        <h1>Find <span className="text-gradient">Movies</span> you like!</h1>
+                        <Search searchTerm = {searchTerm} setSearchTerm = {setSearchTerm}/>
+                    </header>
 
-                <section className="all-movies">
-                    <h2 className="mt-[40px]">All Movies</h2>
-                    {/*{errorMessage && <p className="text-red-500">{errorMessage}</p>}, just showing that you can display error message here like this for testing purpose*/}
-                    {/*Please note that JSX can't directly take the js if/else if/else conditional checking*/}
-                    {content}
-                </section>
-            </div>
-        </main>
+                    <section className="all-movies">
+                        <h2 className="mt-[40px]">All Movies</h2>
+                        {/*{errorMessage && <p className="text-red-500">{errorMessage}</p>}, just showing that you can display error message here like this for testing purpose*/}
+                        {/*Please note that JSX can't directly take the js if/else if/else conditional checking*/}
+                        {content}
+                    </section>
+                </div>
+            </main>
     )
 }
 
 export default App // Exporting the App component
-
