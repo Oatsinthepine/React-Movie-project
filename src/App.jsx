@@ -1,7 +1,7 @@
 import React from 'react'
 import Search from "./components/Search.jsx";
 import {useEffect, useState} from "react";
-
+import Spinner from "./components/Spinner.jsx";
 
 //declare the API base url
 const API_BASE_URL = "https://api.themoviedb.org/3/";
@@ -44,10 +44,10 @@ function App() {
             if(!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            // await the response in json then log the data in console, just a test
+            // await the response in json then log the data in console, just for testing purposes
             const data = await response.json();
             console.log(data);
-            //
+            // check if the response is false, if it is, set the error message and empty the movie list
             if(data.Response === "False") {
                 setErrorMessage(data.Error || "Failed to fetch movies.");
                 setMovieList([]);
@@ -71,10 +71,18 @@ function App() {
         }, []
     )
 
-    // put the
+    // put the logic of displaying the content based on the loading state and error message here, so
+    // it will display the loading spinner when the data is being fetched, and display the error message if there is an error.
+    // if the data is fetched successfully, it will display the list of movies.
     let content;
     if (isLoading) {
-        content = <p className="text-white">Loading...</p>
+        content = (
+            <div className='flex flex-col items-center gap-2'>
+                <p className="text-white">Loading...</p>
+                <Spinner/>
+            </div>
+        )
+
     } else if (errorMessage) {
         content = <p className="text-red-500">{errorMessage}</p>
     } else {
@@ -95,8 +103,8 @@ function App() {
                 </header>
 
                 <section className="all-movies">
-                    <h2>All Movies</h2>
-                    {/*{errorMessage && <p className="text-red-500">{errorMessage}</p>}*/}
+                    <h2 className="mt-[40px]">All Movies</h2>
+                    {/*{errorMessage && <p className="text-red-500">{errorMessage}</p>}, just showing that you can display error message here like this for testing purpose*/}
                     {/*Please note that JSX can't directly take the js if/else if/else conditional checking*/}
                     {content}
                 </section>
