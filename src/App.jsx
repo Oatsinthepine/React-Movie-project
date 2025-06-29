@@ -5,7 +5,7 @@ import Spinner from "./components/Spinner.jsx";
 import MovieCard from "./components/MovieCard.jsx";
 import {useDebounce} from "react-use";
 import {updateSearchCount} from "./appwrite.js";
-
+import {getTrendingMovies} from "./appwrite.js";
 
 //declare the API base url
 const API_BASE_URL = "https://api.themoviedb.org/3/";
@@ -43,6 +43,17 @@ function App() {
         5000, // Delay in milliseconds
         [searchTerm] // Dependency array
     );
+
+    const [trendingMovies, setTrendingMovies] = useState([]); // This will hold the list of trending movies from appwrite database
+    const loadTrendingMovies = async function TrendingMovie(){
+        try {
+            const top5movies = await getTrendingMovies();
+            setTrendingMovies(top5movies);
+        } catch (error) {
+            console.log(`Error fetching trending movies from appwrite database: ${error}`);
+            setTrendingMovies([]);
+        }
+    }
 
     // here we add the fetch async function to fetch the data from the API
     // Now we will add the parameter to this getMovies function, so that we can cll API when fetching the data about a specific movie
@@ -97,6 +108,13 @@ function App() {
         }, [debouncedSearchTerm]
     )
 
+    // create another useEffect dedicated to fetching the trending movies from the appwrite database
+    // This separates the logic of fetching the trending movies from the logic of fetching the movies from the API
+    useEffect(() => {
+        loadTrendingMovies();
+    }, []);
+
+
     // put the logic of displaying the content based on the loading state and error message here, so
     // it will display the loading spinner when the data is being fetched, and display the error message if there is an error.
     // if the data is fetched successfully, it will display the list of movies.
@@ -120,6 +138,29 @@ function App() {
         </ul>
     }
 
+
+    let top5;
+    if (trendingMovies.length > 0) {
+        top5 = (
+            <section className="trending">
+                <h2>Trending Movies</h2>
+                <ul>
+                    {trendingMovies.map((movie, index) => {
+                        return (<li key={movie.$id}>
+                            <p>{index + 1}</p>
+                            <img src={movie.poster_url} alt={movie.title} />
+                        </li>)
+                    })}
+                </ul>
+            </section>
+        )
+    } else {
+        top5 = (
+            // if no trending movies from appwrite database, then show the default trending picture
+            <img src = "/content.png" alt = "default trending picture" />
+        )
+    }
+
     return (
             <main>
                 <div className="pattern"/>
@@ -129,8 +170,8 @@ function App() {
                         <h1>Find <span className="text-gradient">Movies</span> you like!</h1>
                         <Search searchTerm = {searchTerm} setSearchTerm = {setSearchTerm}/>
                     </header>
-
-                    <section className="all-movies">
+                    {top5}
+                   <section className="all-movies">
                         <h2 className="mt-[40px]">All Movies</h2>
                         {/*{errorMessage && <p className="text-red-500">{errorMessage}</p>}, just showing that you can display error message here like this for testing purpose*/}
                         {/*Please note that JSX can't directly take the js if/else if/else conditional checking*/}
