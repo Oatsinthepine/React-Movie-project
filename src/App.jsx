@@ -170,11 +170,11 @@ function App() {
                         <h1>Find <span className="text-gradient">Movies</span> you like!</h1>
                         <Search searchTerm = {searchTerm} setSearchTerm = {setSearchTerm}/>
                     </header>
+                    {/*This is where we will display the top 5 trending movies from the appwrite database*/}
                     {top5}
                    <section className="all-movies">
                         <h2 className="mt-[40px]">All Movies</h2>
-                        {/*{errorMessage && <p className="text-red-500">{errorMessage}</p>}, just showing that you can display error message here like this for testing purpose*/}
-                        {/*Please note that JSX can't directly take the js if/else if/else conditional checking*/}
+                        {/*This is where we display all the fetched movies from the TMDB api*/}
                         {content}
                     </section>
                 </div>
