@@ -68,7 +68,7 @@ function App() {
     }
 
 
-    // useEffect to
+    // useEffect to call the fetchMovies function when the component mounts
     useEffect(() => {
         fetchMovies();
         }, []
