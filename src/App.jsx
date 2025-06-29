@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import Spinner from "./components/Spinner.jsx";
 import MovieCard from "./components/MovieCard.jsx";
 import {useDebounce} from "react-use";
+import {updateSearchCount} from "./appwrite.js";
 
 
 //declare the API base url
@@ -73,6 +74,12 @@ function App() {
             } else {
                 // if the response is true, store the results in the movieList state
                 setMovieList(data.results)
+
+                // implementing the updateSearchCount function to update the search count in the database
+                //updateSearchCount();
+                if (query && data.results.length > 0) {
+                    await updateSearchCount(query, data.results[0])
+                }
             }
 
         } catch (error) {

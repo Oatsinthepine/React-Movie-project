@@ -29,9 +29,9 @@ const MovieCard = function MC(props) {
                     <div className="rating">
                         <img src= "star.svg" alt = "Star Icon" />
                         {vote}
-                        <break/>
+                        <br/>
                         <p className="lang">{props.movie.original_language}</p>
-                        <break/>
+                        <br/>
                         <p className="year">{props.movie.release_date.split('-')[0]}</p>
                     </div>
                 </div>
