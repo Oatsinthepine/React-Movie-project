@@ -3,7 +3,7 @@ import Search from "./components/Search.jsx";
 import {useEffect, useState} from "react";
 import Spinner from "./components/Spinner.jsx";
 import MovieCard from "./components/MovieCard.jsx";
-
+import {useDebounce} from "react-use";
 
 
 //declare the API base url
@@ -33,6 +33,15 @@ function App() {
     const [movieList, setMovieList] = useState([]); // This will hold the list of movies fetched from the API
 
     const [isLoading, setIsLoading] = useState(false); // This will hold the loading state
+
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+    useDebounce(
+        () => {
+            setDebouncedSearchTerm(searchTerm);
+        },
+        5000, // Delay in milliseconds
+        [searchTerm] // Dependency array
+    );
 
     // here we add the fetch async function to fetch the data from the API
     // Now we will add the parameter to this getMovies function, so that we can cll API when fetching the data about a specific movie
@@ -77,8 +86,8 @@ function App() {
 
     // useEffect to call the fetchMovies function when the component mounts
     useEffect(() => {
-        fetchMovies(searchTerm);
-        }, [searchTerm]
+        fetchMovies(debouncedSearchTerm);
+        }, [debouncedSearchTerm]
     )
 
     // put the logic of displaying the content based on the loading state and error message here, so
