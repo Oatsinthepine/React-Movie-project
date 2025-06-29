@@ -35,27 +35,34 @@ function App() {
     const [isLoading, setIsLoading] = useState(false); // This will hold the loading state
 
     // here we add the fetch async function to fetch the data from the API
-    const fetchMovies = async function getMovies() {
+    // Now we will add the parameter to this getMovies function, so that we can cll API when fetching the data about a specific movie
+    const fetchMovies = async function getMovies(query = null) {
         setIsLoading(true); // Set loading state to true before fetching data
         setErrorMessage(""); // Reset error message before fetching data
 
         try {
-            const endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+            let endpoint = "";
+            if (query) {
+                endpoint = `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`;
+            } else {
+                endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+            }
             const response = await fetch(endpoint, API_OPTIONS);
-            // alert(response)
-            //throw new Error('Testing error'); // This line is just for testing error handling
+
             if(!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            // await the response in json then log the data in console, just for testing purposes
+            // await the response in Json then log the data in console, just for testing purposes
             const data = await response.json();
             console.log(data);
+
             // check if the response is false, if it is, set the error message and empty the movie list
             if(data.Response === "False") {
                 setErrorMessage(data.Error || "Failed to fetch movies.");
                 setMovieList([]);
                 return;
             } else {
+                // if the response is true, store the results in the movieList state
                 setMovieList(data.results)
             }
 
@@ -70,8 +77,8 @@ function App() {
 
     // useEffect to call the fetchMovies function when the component mounts
     useEffect(() => {
-        fetchMovies();
-        }, []
+        fetchMovies(searchTerm);
+        }, [searchTerm]
     )
 
     // put the logic of displaying the content based on the loading state and error message here, so

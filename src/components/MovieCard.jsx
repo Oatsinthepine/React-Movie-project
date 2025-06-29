@@ -22,7 +22,7 @@ const MovieCard = function MC(props) {
     return (
         <div className="movie-card">
             {/*<p className="text-white">{props.movie.title}</p>*/}
-            <img src={props.movie.poster_path ? `https://image.tmdb.org/t/p/w500${props.movie.poster_path}` : '/no-image.png'} alt={props.movie.title} />
+            <img src={props.movie.poster_path ? `https://image.tmdb.org/t/p/w500${props.movie.poster_path}` : '/no-poster.png'} alt={props.movie.title} />
             <div className="mt-4">
                 <h3>{props.movie.title}</h3>
                 <div className="content">
