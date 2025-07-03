@@ -3,7 +3,6 @@ import Search from "./components/Search.jsx";
 import {useEffect, useState} from "react";
 import Spinner from "./components/Spinner.jsx";
 import MovieCard from "./components/MovieCard.jsx";
-import {useDebounce} from "react-use";
 import {updateSearchCount} from "./appwrite.js";
 import {getTrendingMovies} from "./appwrite.js";
 
@@ -31,20 +30,15 @@ function App() {
     // declare a useState for errors if something goes wrong when fetching the data
     const [errorMessage, setErrorMessage] = useState("");
 
-    const [movieList, setMovieList] = useState([]); // This will hold the list of movies fetched from the API
+    // This will hold the list of movies fetched from the API
+    const [movieList, setMovieList] = useState([]);
 
-    const [isLoading, setIsLoading] = useState(false); // This will hold the loading state
+    // This will hold the loading state
+    const [isLoading, setIsLoading] = useState(false);
 
-    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
-    useDebounce(
-        () => {
-            setDebouncedSearchTerm(searchTerm);
-        },
-        5000, // Delay in milliseconds
-        [searchTerm] // Dependency array
-    );
+    // This will hold the list of trending movies from appwrite database
+    const [trendingMovies, setTrendingMovies] = useState([]);
 
-    const [trendingMovies, setTrendingMovies] = useState([]); // This will hold the list of trending movies from appwrite database
     const loadTrendingMovies = async function TrendingMovie(){
         try {
             const top5movies = await getTrendingMovies();
@@ -101,15 +95,12 @@ function App() {
         }
     }
 
-
-    // useEffect to call the fetchMovies function when the component mounts
+    // Fetch all movies on mount
     useEffect(() => {
-        fetchMovies(debouncedSearchTerm);
-        }, [debouncedSearchTerm]
-    )
+        fetchMovies();
+    }, []);
 
-    // create another useEffect dedicated to fetching the trending movies from the appwrite database
-    // This separates the logic of fetching the trending movies from the logic of fetching the movies from the API
+    // fetch trending movies only on mount
     useEffect(() => {
         loadTrendingMovies();
     }, []);
@@ -168,7 +159,11 @@ function App() {
                     <header>
                         <img src="/hero.png" alt="Hero Banner"/>
                         <h1>Find <span className="text-gradient">Movies</span> you like!</h1>
-                        <Search searchTerm = {searchTerm} setSearchTerm = {setSearchTerm}/>
+                        <Search
+                            searchTerm={searchTerm}
+                            setSearchTerm={setSearchTerm}
+                            onSearch={() => fetchMovies(searchTerm)}
+                        />
                     </header>
                     {/*This is where we will display the top 5 trending movies from the appwrite database*/}
                     {top5}
