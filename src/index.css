@@ -53,6 +53,17 @@
         @apply bg-hero-pattern w-full h-screen bg-center bg-cover absolute z-0;
     }
 
+    .custom-btn {
+        @apply rounded-lg border border-transparent px-5 py-2 text-base font-medium bg-[#1a1a1a] cursor-pointer transition-colors duration-200 text-white;
+    }
+    .custom-btn:hover {
+        @apply border-[#646cff];
+    }
+    .custom-btn:focus,
+    .custom-btn:focus-visible {
+        outline: 4px auto -webkit-focus-ring-color;
+    }
+
     .wrapper {
         @apply px-5 py-12 xs:p-10 max-w-7xl mx-auto flex flex-col relative z-10;
     }

@@ -51,7 +51,8 @@ function App() {
 
     // here we add the fetch async function to fetch the data from the API
     // Now we will add the parameter to this getMovies function, so that we can cll API when fetching the data about a specific movie
-    const fetchMovies = async function getMovies(query = null) {
+    // I include the page parameter
+    const fetchMovies = async function getMovies(query = null, page = 1) {
         setIsLoading(true); // Set loading state to true before fetching data
         setErrorMessage(""); // Reset error message before fetching data
 
@@ -60,7 +61,7 @@ function App() {
             if (query) {
                 endpoint = `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`;
             } else {
-                endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+                endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc&page=${page}`;
             }
             const response = await fetch(endpoint, API_OPTIONS);
 
@@ -129,7 +130,7 @@ function App() {
         </ul>
     }
 
-
+    // Here below is the logic for displaying the top 5 trending movies from the appwrite database
     let top5;
     if (trendingMovies.length > 0) {
         top5 = (
@@ -152,6 +153,7 @@ function App() {
         )
     }
 
+    // the return statement will return and render all the components of the app
     return (
             <main>
                 <div className="pattern"/>
@@ -167,10 +169,26 @@ function App() {
                     </header>
                     {/*This is where we will display the top 5 trending movies from the appwrite database*/}
                     {top5}
+
+
                    <section className="all-movies">
-                        <h2 className="mt-[40px]">All Movies</h2>
-                        {/*This is where we display all the fetched movies from the TMDB api*/}
-                        {content}
+                       {/*  align the button to the right of the <h2> by wrapping both in a flex container and using justify-between.
+                    Wrap the <h2> and button in a div with flex and justify-between classes.
+                    This will place the heading on the left and the button on the right, on the same line.*/}
+                       <div className="flex items-center justify-between mt-[40px]">
+                           <h2>All Movies</h2>
+                           {/*This event handler is for upon clicking the 'Load Random' button it send another api request and render + display another random 20 movies*/}
+                           <button
+                               className="custom-btn"
+                               onClick={() => {
+                                   const randomPage = Math.floor(Math.random() * 500) + 1;
+                                   fetchMovies(null, randomPage);
+                               }}
+                           >
+                               Load Random
+                           </button>
+                       </div>
+                       {content}
                     </section>
                 </div>
             </main>

@@ -3,7 +3,7 @@ import {useState} from "react";
 
 
 // This component is called 'presentational component', as its purpose is to display the movie details
-const MovieCard = function MC(props) {
+const MovieCard = (props) => {
     // console.log(props)
     // here i only keep movieAvgVote here, as this MovieCard component is only used to display the movie details
     // no need to include setMovieAvgVote as we are not updating the vote average in this component
@@ -22,7 +22,7 @@ const MovieCard = function MC(props) {
     return (
         <div className="movie-card">
             {/*<p className="text-white">{props.movie.title}</p>*/}
-            <img src={props.movie.poster_path ? `https://image.tmdb.org/t/p/w500${props.movie.poster_path}` : '/no-poster.png'} alt={props.movie.title} />
+            <img src={props.movie.poster_path ? `https://image.tmdb.org/t/p/w500${props.movie.poster_path}` : '/no-poster.png'} alt={props.movie.title} onClick={()=> alert("clicked")}/>
             <div className="mt-4">
                 <h3>{props.movie.title}</h3>
                 <div className="content">
